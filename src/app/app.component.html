@@ -38,8 +38,17 @@
       </ul>
     </div>
 
-    <div class="d-flex ms-lg-auto order-lg-3">
-      <a class="btn btn-info text-white fs-3" routerLink="/login">Login</a>
+    <div class="d-flex align-items-center">
+      <ng-container *ngIf="user$ | async as user; else login">
+        <span class="me-3">{{ user.email }}</span>
+        <button class="btn btn-outline-danger btn-sm" (click)="logout()">
+          Cerrar sesión
+        </button>
+      </ng-container>
+
+      <ng-template #login>
+        <a routerLink="/login" class="btn btn-outline-primary btn-sm">Login</a>
+      </ng-template>
     </div>
   </div>
 </nav>

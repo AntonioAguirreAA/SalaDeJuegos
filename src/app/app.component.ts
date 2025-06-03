@@ -1,12 +1,24 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { AuthService } from './servicios/auth.service.service';
+import { Observable } from 'rxjs';
+import { User } from '@supabase/supabase-js';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'SalaDeJuegos';
+  user$: Observable<User | null>;
+
+  constructor(private authService: AuthService) {
+    this.user$ = this.authService.user$;
+  }
+
+  logout() {
+    this.authService.signOut();
+  }
 }

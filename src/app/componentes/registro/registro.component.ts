@@ -1,82 +1,73 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { createClient, User } from '@supabase/supabase-js';
-import { environment } from '../../../environments/environment';
-
-const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
+import { AuthService } from '../../servicios/auth.service.service';
 
 @Component({
   standalone: true,
+  selector: 'app-registro',
   imports: [FormsModule, RouterLink],
-  selector: 'app-register',
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.scss',
 })
 export class RegistroComponent {
-  username: string;
-  password: string;
+  username: string = '';
+  password: string = '';
   name: string = '';
-  age: number = 0;
+  age: number | null = null;
   avatarFile: File | null = null;
 
-  constructor(private router: Router) {
-    this.username = '';
-    this.password = '';
+  constructor(private router: Router, private authService: AuthService) {}
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input?.files?.length) {
+      this.avatarFile = input.files[0];
+    }
   }
 
-  register() {
-    supabase.auth
-      .signUp({
-        email: this.username,
-        password: this.password,
-      })
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Error:', error.message);
-        } else {
-          console.log('User registered:', data.user);
-          this.saveUserData(data.user!);
-        }
-      });
-  }
-
-  saveUserData(user: User) {
-    const avatarUrl = this.saveFile().then((data) => {
-      if (data) {
-        supabase
-          .from('users-data')
-          .insert([
-            {
-              authId: user.id,
-              name: this.name,
-              age: this.age,
-              avatarUrl: data.path,
-            },
-          ])
-          .then(({ data, error }) => {
-            if (error) {
-              console.error('Error:', error.message);
-            } else {
-              this.router.navigate(['/home']);
-            }
-          });
-      }
+  async register() {
+    const { data, error } = await this.authService.getSupabase().auth.signUp({
+      email: this.username,
+      password: this.password,
+      options: {
+        data: {
+          name: this.name,
+          age: this.age,
+        },
+      },
     });
-  }
 
-  async saveFile() {
-    const { data, error } = await supabase.storage
-      .from('fotos')
-      .upload(`users/${this.avatarFile?.name}`, this.avatarFile!, {
-        cacheControl: '3600',
-        upsert: false,
-      });
+    if (error) {
+      console.error('Error:', error.message);
+      return;
+    }
 
-    return data;
-  }
+    if (this.avatarFile && data.user) {
+      const supabase = this.authService.getSupabase();
+      const filePath = `avatars/${data.user.id}.jpg`;
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, this.avatarFile, {
+          cacheControl: '3600',
+          upsert: true,
+        });
 
-  onFileSelected(event: any) {
-    this.avatarFile = event.target.files[0];
+      if (!uploadError) {
+        const { data: publicUrlData } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
+
+        if (publicUrlData.publicUrl) {
+          await supabase.auth.updateUser({
+            data: {
+              avatar_url: publicUrlData.publicUrl,
+            },
+          });
+        }
+      }
+    }
+
+    this.router.navigate(['/']);
   }
 }

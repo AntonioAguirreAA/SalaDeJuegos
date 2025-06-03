@@ -1,11 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { createClient } from '@supabase/supabase-js';
-import { environment } from '../../../environments/environment';
-
-const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
-
+import { AuthService } from '../../servicios/auth.service.service';
 @Component({
   standalone: true,
   imports: [FormsModule, RouterLink],
@@ -17,12 +13,12 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   login() {
-    console.log(this.username + this.password);
-    supabase.auth
-      .signInWithPassword({
+    this.authService
+      .getSupabase()
+      .auth.signInWithPassword({
         email: this.username,
         password: this.password,
       })
@@ -30,10 +26,11 @@ export class LoginComponent {
         if (error) {
           console.error('Error:', error.message);
         } else {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/']);
         }
       });
   }
+
   irARegistro() {
     this.router.navigate(['/registro']);
   }
