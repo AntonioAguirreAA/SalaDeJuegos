@@ -22,34 +22,43 @@
                   <h5 class="fw-normal mb-2 text-center">Iniciá sesión</h5>
 
                   <div class="form-outline mb-3">
-                    <label class="form-label" for="form2Example17">Email</label>
+                    <label class="form-label">Correo electrónico</label>
                     <input
                       type="email"
-                      id="form2Example17"
                       class="form-control"
+                      placeholder="Correo electrónico"
+                      [(ngModel)]="username"
+                      name="username"
                     />
                   </div>
 
                   <div class="form-outline mb-3">
-                    <label class="form-label" for="form2Example27"
-                      >Contraseña</label
-                    >
+                    <label class="form-label">Contraseña</label>
                     <input
                       type="password"
-                      id="form2Example27"
                       class="form-control"
+                      placeholder="Contraseña"
+                      [(ngModel)]="password"
+                      name="password"
                     />
                   </div>
 
                   <div class="mb-3">
-                    <button class="btn btn-dark w-100" type="button">
+                    <button
+                      (click)="login()"
+                      class="btn btn-dark w-100"
+                      type="button"
+                    >
                       Login
                     </button>
                   </div>
 
                   <div class="text-center">
                     <p class="mt-2 mb-1">
-                      ¿No tenés cuenta? <a href="#!">Registrate</a>
+                      ¿No tenés cuenta?
+                      <button class="btn btn-warning" (click)="irARegistro()">
+                        Registrate
+                      </button>
                     </p>
                   </div>
                 </form>
