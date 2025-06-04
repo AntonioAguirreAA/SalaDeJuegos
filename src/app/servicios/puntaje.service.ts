@@ -19,44 +19,56 @@ export class PuntajeService {
     return this.authService.getCurrentUser()?.id ?? null;
   }
 
-  // Guardar o actualizar puntaje por juego
+  // Guardar SIEMPRE un nuevo puntaje sin verificar si hay registros anteriores
   async guardarPuntaje(juego: string, puntos: number): Promise<void> {
     const userId = this.getUserId();
     const email = this.getUserEmail();
-    if (!userId || !email) return;
+    if (!userId || !email) {
+      console.error('Error: Usuario no autenticado');
+      return;
+    }
 
-    // Buscar si ya hay un registro para ese juego y usuario
-    const { data, error } = await this.supabase
+    const { error } = await this.supabase
       .from('puntajes')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('juego', juego)
-      .single();
+      .insert([{ user_id: userId, email, juego, puntos }]);
 
-    if (data) {
-      // Actualizar si existe
-      await this.supabase.from('puntajes').update({ puntos }).eq('id', data.id);
+    if (error) {
+      console.error(
+        `Error al insertar puntaje para "${juego}":`,
+        error.message
+      );
     } else {
-      // Insertar si no existe
-      await this.supabase
-        .from('puntajes')
-        .insert([{ user_id: userId, email, juego, puntos }]);
+      console.log(`Puntaje insertado correctamente para "${juego}"`);
     }
   }
 
-  // Obtener puntaje de un juego
+  // Obtener puntaje de un juego (último o primero registrado)
   async obtenerPuntaje(juego: string): Promise<number> {
     const userId = this.getUserId();
-    if (!userId) return 0;
+    if (!userId) {
+      console.error('Error: Usuario no autenticado');
+      return 0;
+    }
 
     const { data, error } = await this.supabase
       .from('puntajes')
       .select('puntos')
       .eq('user_id', userId)
-      .eq('juego', juego)
-      .single();
+      .eq('juego', juego);
 
-    return data?.puntos ?? 0;
+    if (error) {
+      console.error(`Error al obtener puntaje para "${juego}":`, error.message);
+      return 0;
+    }
+
+    if (!data || data.length === 0) {
+      console.log(`No se encontró puntaje para "${juego}"`);
+      return 0;
+    }
+
+    const ultimoPuntaje = data[data.length - 1].puntos;
+    console.log(`Puntaje obtenido para "${juego}":`, ultimoPuntaje);
+    return ultimoPuntaje;
   }
 
   // Obtener todos los puntajes del usuario
@@ -64,13 +76,22 @@ export class PuntajeService {
     { juego: string; puntos: number }[]
   > {
     const userId = this.getUserId();
-    if (!userId) return [];
+    if (!userId) {
+      console.error('Error: Usuario no autenticado');
+      return [];
+    }
 
     const { data, error } = await this.supabase
       .from('puntajes')
       .select('juego, puntos')
       .eq('user_id', userId);
 
+    if (error) {
+      console.error('Error al obtener todos los puntajes:', error.message);
+      return [];
+    }
+
+    console.log('Todos los puntajes obtenidos:', data);
     return data ?? [];
   }
 }

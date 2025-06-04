@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-ahorcado',
-  standalone: true, // 👈 Asegurate de que sea standalone
-  imports: [CommonModule], // 👈 Agregá esto
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './ahorcado.component.html',
   styleUrls: ['./ahorcado.component.scss'],
 })
