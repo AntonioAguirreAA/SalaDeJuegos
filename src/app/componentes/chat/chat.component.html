@@ -1,1 +1,43 @@
-<p>chat works!</p>
+<div class="chat-wrapper d-flex flex-column">
+  <h2 class="text-white text-center mt-3">Chat</h2>
+
+  <div class="chat-box flex-grow-1 overflow-auto px-3 py-2">
+    <div *ngFor="let m of mensajes">
+      <div
+        class="d-flex mb-2"
+        [ngClass]="{
+          'justify-content-end': m.user === currentUserEmail,
+          'justify-content-start': m.user !== currentUserEmail
+        }"
+      >
+        <div
+          class="p-2 rounded message"
+          [ngClass]="{
+            'bg-primary text-white': m.user === currentUserEmail,
+            'bg-light text-dark': m.user !== currentUserEmail
+          }"
+        >
+          <div *ngIf="m.user !== currentUserEmail" class="fw-bold small mb-1">
+            {{ m.user }}
+          </div>
+          <div>{{ m.mensaje }}</div>
+          <div class="small text-muted mt-1 text-end">{{ m.fecha }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form
+    [formGroup]="chatForm"
+    (ngSubmit)="sendMessage()"
+    class="chat-input p-2 border-top d-flex gap-2 bg-white"
+  >
+    <input
+      class="form-control"
+      formControlName="mensaje"
+      placeholder="Escribe un mensaje"
+      required
+    />
+    <button type="submit" class="btn btn-primary">Enviar</button>
+  </form>
+</div>

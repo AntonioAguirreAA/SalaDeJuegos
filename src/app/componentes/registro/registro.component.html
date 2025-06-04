@@ -10,16 +10,25 @@
 
             <h5 class="fw-normal mb-4 text-center">Registrate</h5>
 
-            <form>
+            <form #form="ngForm" (ngSubmit)="register()" novalidate>
               <div class="form-outline mb-3">
-                <label class="form-label">Correo electronico</label>
+                <label class="form-label">Correo electrónico</label>
                 <input
-                  type="text"
+                  type="email"
                   class="form-control"
-                  placeholder="Correo electronico"
-                  [(ngModel)]="username"
+                  placeholder="Correo electrónico"
                   name="username"
+                  [(ngModel)]="username"
+                  required
+                  email
+                  #usernameField="ngModel"
                 />
+                <div
+                  class="text-danger"
+                  *ngIf="usernameField.invalid && usernameField.touched"
+                >
+                  Ingresá un email válido.
+                </div>
               </div>
 
               <div class="form-outline mb-3">
@@ -28,9 +37,18 @@
                   type="password"
                   class="form-control"
                   placeholder="Contraseña"
-                  [(ngModel)]="password"
                   name="password"
+                  [(ngModel)]="password"
+                  required
+                  minlength="6"
+                  #passwordField="ngModel"
                 />
+                <div
+                  class="text-danger"
+                  *ngIf="passwordField.invalid && passwordField.touched"
+                >
+                  La contraseña debe tener al menos 6 caracteres.
+                </div>
               </div>
 
               <div class="form-outline mb-3">
@@ -39,9 +57,17 @@
                   type="text"
                   class="form-control"
                   placeholder="Nombre"
-                  [(ngModel)]="name"
                   name="name"
+                  [(ngModel)]="name"
+                  required
+                  #nameField="ngModel"
                 />
+                <div
+                  class="text-danger"
+                  *ngIf="nameField.invalid && nameField.touched"
+                >
+                  Este campo es obligatorio.
+                </div>
               </div>
 
               <div class="form-outline mb-3">
@@ -50,9 +76,18 @@
                   type="number"
                   class="form-control"
                   placeholder="Edad"
-                  [(ngModel)]="age"
                   name="age"
+                  [(ngModel)]="age"
+                  required
+                  min="19"
+                  #ageField="ngModel"
                 />
+                <div
+                  class="text-danger"
+                  *ngIf="ageField.invalid && ageField.touched"
+                >
+                  Debés tener más de 18 años.
+                </div>
               </div>
 
               <div class="form-outline mb-3">
@@ -67,8 +102,8 @@
               <div class="mb-3">
                 <button
                   class="btn btn-dark w-100"
-                  type="button"
-                  (click)="register()"
+                  type="submit"
+                  [disabled]="form.invalid"
                 >
                   Registro
                 </button>

@@ -1,34 +1,45 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+// src/app/components/login/login.component.ts
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../servicios/auth.service.service';
+import Swal from 'sweetalert2';
+
 @Component({
   standalone: true,
-  imports: [FormsModule],
   selector: 'app-login',
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  username: string = '';
-  password: string = '';
+  fb = inject(FormBuilder);
+  authService = inject(AuthService);
+  router = inject(Router);
 
-  constructor(private router: Router, private authService: AuthService) {}
+  loginForm: FormGroup = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+  });
 
-  login() {
-    this.authService
+  async login() {
+    if (this.loginForm.invalid) return;
+
+    const { email, password } = this.loginForm.value;
+    const { error } = await this.authService
       .getSupabase()
-      .auth.signInWithPassword({
-        email: this.username,
-        password: this.password,
-      })
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Error:', error.message);
-        } else {
-          this.router.navigate(['/']);
-        }
-      });
+      .auth.signInWithPassword({ email, password });
+
+    if (error) {
+      Swal.fire('Error', error.message, 'error');
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
 
   irARegistro() {
