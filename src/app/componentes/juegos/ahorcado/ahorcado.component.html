@@ -1,1 +1,44 @@
-<p>ahorcado works!</p>
+<div class="ahorcado-container">
+  <h1>Ahorcado marcas de autos</h1>
+
+  <div class="imagen-ahorcado">
+    <img
+      [src]="obtenerImagenAhorcado()"
+      alt="Ahorcado"
+      class="imagen-ahorcado"
+    />
+  </div>
+
+  <h3>Adivina la palabra</h3>
+
+  <div class="palabra-oculta">
+    <h3>{{ palabraOculta }}</h3>
+  </div>
+
+  <div class="intentos">
+    <p>Intentos fallidos: {{ intentos }} / {{ maxIntentos }}</p>
+    <p>Letras fallidas: {{ letrasFalladas.join(", ") }}</p>
+  </div>
+
+  <div class="teclado">
+    <button
+      *ngFor="let letra of 'abcdefghijklmnopqrstuvwxyz'.split('')"
+      (click)="comprobarLetra(letra)"
+      [disabled]="
+        letrasAdivinadas.includes(letra) || letrasFalladas.includes(letra)
+      "
+    >
+      {{ letra }}
+    </button>
+  </div>
+
+  <div *ngIf="juegoTerminado">
+    <p *ngIf="intentos >= maxIntentos" class="palabra-correcta">
+      ¡Has perdido! La palabra era: <strong>{{ palabra }}</strong>
+    </p>
+    <p *ngIf="intentos < maxIntentos && !palabraOculta.includes('_')">
+      ¡Has ganado!
+    </p>
+    <button (click)="reiniciar()" class="boton-reiniciar">Reiniciar</button>
+  </div>
+</div>
