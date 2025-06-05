@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewChecked,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -14,12 +21,14 @@ import { Mensaje } from '../models/mensaje';
   styleUrls: ['./chat.component.scss'],
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   chatForm: FormGroup;
   mensajes: Mensaje[] = [];
   currentUserEmail: string | null = null;
   private supabase: SupabaseClient;
   private sub: Subscription | null = null;
+
+  @ViewChild('chatBox') chatBoxRef!: ElementRef;
 
   constructor(private authService: AuthService, private fb: FormBuilder) {
     this.supabase = this.authService.getSupabase();
@@ -35,7 +44,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     await this.loadMensajes();
 
-    // Suscribirse a cambios en tiempo real
     this.supabase
       .channel('mensajes_channel')
       .on(
@@ -53,12 +61,22 @@ export class ChatComponent implements OnInit, OnDestroy {
           });
         }
       )
-
       .subscribe();
+  }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
   }
 
   ngOnDestroy(): void {
     this.supabase.removeAllChannels();
+  }
+
+  private scrollToBottom() {
+    const el = this.chatBoxRef?.nativeElement;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
   }
 
   async loadMensajes() {
@@ -81,10 +99,13 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.chatForm.valid && this.currentUserEmail) {
       const mensaje = this.chatForm.get('mensaje')?.value;
 
-      const { error } = await this.supabase.from('mensajes').insert({
-        user: this.currentUserEmail,
-        mensaje: mensaje,
-      });
+      const { data, error } = await this.supabase
+        .from('mensajes')
+        .insert({
+          user: this.currentUserEmail,
+          mensaje: mensaje,
+        })
+        .select('*'); // Importante para obtener el registro insertado
 
       if (error) {
         console.error('Error al enviar mensaje:', error);

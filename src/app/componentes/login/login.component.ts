@@ -27,17 +27,27 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
+  autocompletarLogin() {
+    this.loginForm.patchValue({
+      email: 'admin@test.com',
+      password: '123456',
+    });
+  }
+
   async login() {
     if (this.loginForm.invalid) return;
 
     const { email, password } = this.loginForm.value;
-    const { error } = await this.authService
+
+    const { data, error } = await this.authService
       .getSupabase()
       .auth.signInWithPassword({ email, password });
 
-    if (error) {
-      Swal.fire('Error', 'Error al iniciar sesion', 'error');
+    if (error || !data.user) {
+      Swal.fire('Error', 'Error al iniciar sesión', 'error');
     } else {
+      // ✅ Registrar login en la tabla
+      await this.authService.logLogin(data.user);
       this.router.navigate(['/home']);
     }
   }

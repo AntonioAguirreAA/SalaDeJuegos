@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
+import { UserData } from '../componentes/models/user-data';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -31,5 +32,38 @@ export class AuthService {
 
   logout() {
     return this.supabase.auth.signOut();
+  }
+
+  async logLogin(user: User) {
+    const { error } = await this.supabase.from('login_logs').insert({
+      user_id: user.id,
+      email: user.email,
+    });
+
+    if (error) {
+      console.error('Error al registrar login:', error.message);
+    }
+  }
+
+  // auth.service.ts
+
+  async getUserData(): Promise<UserData | null> {
+    const session = this.supabase.auth.getSession();
+    const user = (await session).data.session?.user;
+
+    if (!user) return null;
+
+    const { data, error } = await this.supabase
+      .from('users-data')
+      .select('*')
+      .eq('authId', user.id)
+      .single();
+
+    if (error) {
+      console.error('Error al obtener perfil:', error.message);
+      return null;
+    }
+
+    return data as UserData;
   }
 }
