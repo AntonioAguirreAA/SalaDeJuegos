@@ -28,26 +28,10 @@ export const routes: Routes = [
   },
   {
     path: 'juegos',
-    component: JuegosComponent,
-    children: [
-      {
-        path: 'ahorcado',
-        component: AhorcadoComponent,
-      },
-      {
-        path: 'preguntados',
-        component: PreguntadosComponent,
-      },
-      {
-        path: 'mayormenor',
-        component: MayormenorComponent,
-      },
-      {
-        path: 'colorcontraste',
-        component: ColorcontrasteComponent,
-      },
-    ],
+    loadChildren: () =>
+      import('./componentes/juegos/juegos.module').then((m) => m.JuegosModule),
   },
+
   {
     path: 'quiensoy',
     component: QuiensoyComponent,
