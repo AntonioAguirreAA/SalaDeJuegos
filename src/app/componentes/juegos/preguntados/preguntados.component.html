@@ -18,5 +18,17 @@
     </div>
 
     <p>{{ mensaje }}</p>
+    <p>Puntos acumulados: {{ puntos }}</p>
+  </div>
+
+  <div *ngIf="juegoTerminado" class="iniciar-container">
+    <div class="preguntados-container">
+      <h2>Juego terminado</h2>
+      <p>Puntaje final: {{ puntos }}</p>
+      <p>{{ mensaje }}</p>
+      <button class="boton-iniciar" (click)="reiniciarJuego()">
+        Reiniciar
+      </button>
+    </div>
   </div>
 </div>

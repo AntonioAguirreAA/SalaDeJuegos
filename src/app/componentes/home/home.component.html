@@ -12,34 +12,24 @@
       </h1>
       <br />
       <div class="d-flex justify-content-around flex-wrap gap-2">
-        <a
-          routerLink="/juegos/ahorcado"
-          class="btn btn-primary btn-lg"
-          role="button"
-        >
+        <button class="btn btn-primary btn-lg" (click)="irAJuego('ahorcado')">
           Ahorcado
-        </a>
-        <a
-          routerLink="/juegos/mayormenor"
-          class="btn btn-primary btn-lg"
-          role="button"
-        >
+        </button>
+        <button class="btn btn-primary btn-lg" (click)="irAJuego('mayormenor')">
           Mayor/Menor
-        </a>
-        <a
-          routerLink="/juegos/preguntados"
+        </button>
+        <button
           class="btn btn-primary btn-lg"
-          role="button"
+          (click)="irAJuego('preguntados')"
         >
           Preguntados
-        </a>
-        <a
-          routerLink="/juegos/color"
+        </button>
+        <button
           class="btn btn-primary btn-lg"
-          role="button"
+          (click)="irAJuego('colorcontraste')"
         >
           Color/Contraste
-        </a>
+        </button>
       </div>
     </div>
   </div>
