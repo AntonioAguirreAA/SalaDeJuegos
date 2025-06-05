@@ -30,7 +30,29 @@ export class RegistroComponent {
 
   async register() {
     try {
-      const { data, error } = await this.authService.getSupabase().auth.signUp({
+      const supabase = this.authService.getSupabase();
+
+      // ✅ Verificamos si el email ya está registrado en la tabla users-data
+      const { data: existingUsers, error: checkError } = await supabase
+        .from('users-data')
+        .select('email')
+        .eq('email', this.username);
+
+      if (checkError) {
+        throw checkError;
+      }
+
+      if (existingUsers.length > 0) {
+        Swal.fire({
+          title: 'Correo ya registrado',
+          text: 'Ya existe una cuenta con este correo electrónico.',
+          icon: 'error',
+        });
+        return;
+      }
+
+      // ✅ Registro en auth
+      const { data, error } = await supabase.auth.signUp({
         email: this.username,
         password: this.password,
         options: {
@@ -42,28 +64,16 @@ export class RegistroComponent {
       });
 
       if (error) {
-        if (error.message.includes('already registered')) {
-          Swal.fire({
-            title: 'Error',
-            text: 'El correo ya estaba registrado.',
-            icon: 'error',
-          });
-        } else {
-          Swal.fire({
-            title: 'Error',
-            text: error.message,
-            icon: 'error',
-          });
-        }
-        return;
+        throw error;
       }
 
+      let filePath = '';
+
       if (this.avatarFile && data.user) {
-        const supabase = this.authService.getSupabase();
-        const filePath = `avatars/${data.user.id}.jpg`;
+        filePath = `users/${data.user.id}.jpg`;
 
         const { error: uploadError } = await supabase.storage
-          .from('avatars')
+          .from('fotos')
           .upload(filePath, this.avatarFile, {
             cacheControl: '3600',
             upsert: true,
@@ -71,7 +81,7 @@ export class RegistroComponent {
 
         if (!uploadError) {
           const { data: publicUrlData } = supabase.storage
-            .from('avatars')
+            .from('fotos')
             .getPublicUrl(filePath);
 
           if (publicUrlData.publicUrl) {
@@ -84,18 +94,30 @@ export class RegistroComponent {
         }
       }
 
+      // ✅ Insertar en users-data (ahora también con el email)
+      if (data.user) {
+        await supabase.from('users-data').insert({
+          authId: data.user.id,
+          name: this.name,
+          age: this.age,
+          email: this.username, // 👈 se guarda el email
+          avatarUrl: filePath,
+        });
+      }
+
       Swal.fire({
         title: 'Registro exitoso',
-        text: 'Ahora podés iniciar sesión.',
+        text: 'Confirmá tu cuenta antes de iniciar sesion',
         icon: 'success',
       });
 
       this.router.navigate(['/']);
     } catch (e) {
+      console.error(e);
       Swal.fire({
         title: 'Error',
         text: 'Algo salió mal al registrarte.',
-        icon: 'error',
+        icon: 'info',
       });
     }
   }

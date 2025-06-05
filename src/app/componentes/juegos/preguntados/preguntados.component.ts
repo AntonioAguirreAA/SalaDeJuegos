@@ -28,12 +28,7 @@ export class PreguntadosComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    await this.cargarPuntaje(); // Cargar el puntaje global al iniciar
     this.iniciarJuego();
-  }
-
-  async cargarPuntaje(): Promise<void> {
-    this.puntaje = await this.puntajeService.obtenerPuntaje('preguntados');
   }
 
   iniciarJuego(): void {
@@ -115,7 +110,7 @@ export class PreguntadosComponent implements OnInit {
     const nuevoPuntaje = Math.max(0, this.puntaje + cambio);
     this.puntaje = nuevoPuntaje;
 
-    await this.puntajeService.guardarPuntaje('preguntados', this.puntaje);
+    await this.puntajeService.guardarPuntaje('Preguntados', this.puntaje);
     console.log('Puntaje global actualizado:', this.puntaje);
   }
 }

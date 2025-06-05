@@ -81,7 +81,7 @@ export class MayormenorComponent implements OnInit {
     } else {
       // Perdiste
       this.juegoTerminado = true;
-      await this.puntajeService.guardarPuntaje('mayorMenor', this.puntos);
+      await this.puntajeService.guardarPuntaje('Mayor Menor', this.puntos);
     }
   }
 

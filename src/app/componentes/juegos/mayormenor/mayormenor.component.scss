@@ -2,8 +2,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #7e98f4, #ebb3b3);
+  height: 70vh;
+}
+
+.juego-container {
+  position: relative;
+  padding: 4px;
+  border-radius: 15px;
+  background: linear-gradient(270deg, #4c5baf, #eb6fb3, #4c5baf);
+  background-size: 600% 600%;
+  animation: borderAnim 6s ease infinite;
+  width: 780px;
 }
 
 .mayor-menor-container {
@@ -11,9 +20,7 @@
   text-align: center;
   background-color: #fff;
   border-radius: 10px;
-  margin-top: 50px;
   padding: 40px;
-  border: 3px solid #000000;
   max-width: 900px;
 }
 

@@ -1,20 +1,22 @@
-<div *ngIf="juegoEmpezado" class="preguntados-container">
-  <h1>Preguntados Banderas de Paises</h1>
-  <h2>¿A qué país pertenece esta bandera?</h2>
+<div class="juego-container">
+  <div *ngIf="juegoEmpezado" class="preguntados-container">
+    <h1>Preguntados Banderas de Paises</h1>
+    <h2>¿A qué país pertenece esta bandera?</h2>
 
-  <div class="bandera-container">
-    <img [src]="banderaPais" alt="Bandera del país" width="200px" />
+    <div class="bandera-container">
+      <img [src]="banderaPais" alt="Bandera del país" width="200px" />
+    </div>
+
+    <div *ngIf="!cargando" class="opciones-container">
+      <button
+        *ngFor="let opcion of opciones"
+        (click)="adivinarPais(opcion)"
+        class="boton-opcion"
+      >
+        {{ opcion }}
+      </button>
+    </div>
+
+    <p>{{ mensaje }}</p>
   </div>
-
-  <div *ngIf="!cargando" class="opciones-container">
-    <button
-      *ngFor="let opcion of opciones"
-      (click)="adivinarPais(opcion)"
-      class="boton-opcion"
-    >
-      {{ opcion }}
-    </button>
-  </div>
-
-  <p>{{ mensaje }}</p>
 </div>

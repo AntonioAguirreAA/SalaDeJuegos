@@ -44,7 +44,7 @@ export class ColorcontrasteComponent implements OnInit {
       this.generarColores();
     } else {
       this.juegoTerminado = true;
-      this.puntajeService.guardarPuntaje('colorDiferente', this.puntos);
+      this.puntajeService.guardarPuntaje('Color Contraste', this.puntos);
     }
   }
 

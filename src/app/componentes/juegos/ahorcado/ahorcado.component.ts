@@ -44,12 +44,7 @@ export class AhorcadoComponent implements OnInit {
   constructor(private puntajeService: PuntajeService) {} // Inyectar el servicio
 
   async ngOnInit(): Promise<void> {
-    await this.cargarPuntaje(); // Cargar el puntaje al iniciar
     this.iniciarJuego();
-  }
-
-  async cargarPuntaje() {
-    this.puntaje = await this.puntajeService.obtenerPuntaje('ahorcado');
   }
 
   iniciarJuego() {
@@ -110,7 +105,7 @@ export class AhorcadoComponent implements OnInit {
 
   async actualizarPuntaje(puntos: number) {
     this.puntaje += puntos;
-    await this.puntajeService.guardarPuntaje('ahorcado', this.puntaje);
+    await this.puntajeService.guardarPuntaje('Ahorcado', this.puntaje);
     console.log('Puntaje actualizado:', this.puntaje);
   }
 }

@@ -1,1 +1,23 @@
-<p>resultados works!</p>
+<div class="container">
+  <h2 class="titulo text-white">Top 5 Puntajes por Juego</h2>
+
+  <div *ngFor="let juego of juegos" class="juego-card">
+    <h3>{{ juego }}</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Puntos</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of resultados[juego]">
+          <td>{{ r.email }}</td>
+          <td>{{ r.puntos }}</td>
+          <td>{{ r.created_at }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,19 +1,21 @@
-<div class="color-juego-container">
-  <h2>Encuentra el color diferente</h2>
+<div class="juego-container">
+  <div class="color-juego-container">
+    <h2>Encuentra el color diferente</h2>
 
-  <div class="cuadrados-container">
-    <div
-      *ngFor="let color of colores; let i = index"
-      class="cuadrado"
-      [style.backgroundColor]="color"
-      (click)="elegir(i)"
-    ></div>
-  </div>
+    <div class="cuadrados-container">
+      <div
+        *ngFor="let color of colores; let i = index"
+        class="cuadrado"
+        [style.backgroundColor]="color"
+        (click)="elegir(i)"
+      ></div>
+    </div>
 
-  <p>Puntos: {{ puntos }}</p>
+    <p>Puntos: {{ puntos }}</p>
 
-  <div *ngIf="juegoTerminado">
-    <h3>¡Perdiste!</h3>
-    <button (click)="iniciarJuego()">Reiniciar juego</button>
+    <div *ngIf="juegoTerminado">
+      <h3>¡Perdiste!</h3>
+      <button (click)="iniciarJuego()">Reiniciar juego</button>
+    </div>
   </div>
 </div>

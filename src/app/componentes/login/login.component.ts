@@ -36,7 +36,7 @@ export class LoginComponent {
       .auth.signInWithPassword({ email, password });
 
     if (error) {
-      Swal.fire('Error', error.message, 'error');
+      Swal.fire('Error', 'Error al iniciar sesion', 'error');
     } else {
       this.router.navigate(['/home']);
     }

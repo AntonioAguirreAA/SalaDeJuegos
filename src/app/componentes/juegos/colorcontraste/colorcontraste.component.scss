@@ -1,10 +1,27 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  overflow: hidden;
+}
 .color-juego-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   text-align: center;
-  margin-top: 50px;
+  border-radius: 10px;
+  background-color: white;
+  width: 99%;
+  height: 99%;
+  margin: auto;
 
   .cuadrados-container {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 20px;
     margin: 20px 0;
   }
@@ -21,4 +38,33 @@
   .cuadrado:hover {
     transform: scale(1.05);
   }
+
+  button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #4c5baf;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #374393;
+  }
+}
+
+.juego-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 4px;
+  border-radius: 15px;
+  background: linear-gradient(270deg, #4c5baf, #eb6fb3, #4c5baf);
+  background-size: 600% 600%;
+  animation: borderAnim 6s ease infinite;
+  width: 780px;
+  height: 400px;
 }

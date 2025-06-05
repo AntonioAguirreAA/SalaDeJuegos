@@ -42,56 +42,26 @@ export class PuntajeService {
     }
   }
 
-  // Obtener puntaje de un juego (último o primero registrado)
-  async obtenerPuntaje(juego: string): Promise<number> {
-    const userId = this.getUserId();
-    if (!userId) {
-      console.error('Error: Usuario no autenticado');
-      return 0;
-    }
-
+  // Obtener los mejores puntajes de un juego
+  async obtenerTopPuntajesPorJuego(
+    juego: string,
+    limite: number = 5
+  ): Promise<{ email: string; puntos: number; created_at: string }[]> {
     const { data, error } = await this.supabase
       .from('puntajes')
-      .select('puntos')
-      .eq('user_id', userId)
-      .eq('juego', juego);
+      .select('email, puntos, created_at')
+      .eq('juego', juego)
+      .order('puntos', { ascending: false })
+      .limit(limite);
 
     if (error) {
-      console.error(`Error al obtener puntaje para "${juego}":`, error.message);
-      return 0;
-    }
-
-    if (!data || data.length === 0) {
-      console.log(`No se encontró puntaje para "${juego}"`);
-      return 0;
-    }
-
-    const ultimoPuntaje = data[data.length - 1].puntos;
-    console.log(`Puntaje obtenido para "${juego}":`, ultimoPuntaje);
-    return ultimoPuntaje;
-  }
-
-  // Obtener todos los puntajes del usuario
-  async obtenerTodosLosPuntajes(): Promise<
-    { juego: string; puntos: number }[]
-  > {
-    const userId = this.getUserId();
-    if (!userId) {
-      console.error('Error: Usuario no autenticado');
+      console.error(
+        `Error al obtener top puntajes de "${juego}":`,
+        error.message
+      );
       return [];
     }
 
-    const { data, error } = await this.supabase
-      .from('puntajes')
-      .select('juego, puntos')
-      .eq('user_id', userId);
-
-    if (error) {
-      console.error('Error al obtener todos los puntajes:', error.message);
-      return [];
-    }
-
-    console.log('Todos los puntajes obtenidos:', data);
     return data ?? [];
   }
 }
